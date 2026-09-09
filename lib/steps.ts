@@ -57,10 +57,10 @@ export const STEPS: Step[] = [
     eyebrow: "Última pergunta!",
     question: "Quantos iPhones sua loja vende, em média, por mês?",
     options: [
-      "De 0 a 20 iPhones por mês",
-      "De 20 a 50 iPhones por mês",
-      "De 50 a 150 iPhones por mês",
       "150 iPhones ou mais por mês",
+      "De 50 a 150 iPhones por mês",
+      "De 20 a 50 iPhones por mês",
+      "De 0 a 20 iPhones por mês",
     ],
   },
 ];
