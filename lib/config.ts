@@ -7,7 +7,7 @@ export const BRAND_HEADLINE =
   "A Maior Assessoria de Marketing Nichada da América Latina.";
 export const BRAND_DESCRIPTION =
   process.env.NEXT_PUBLIC_BRAND_DESCRIPTION ||
-  "Uma análise estratégica para identificar oportunidades de captação de clientes para o seu consultório.";
+  "Uma análise estratégica para identificar oportunidades de fornecimento e crescimento para a sua loja de iPhones.";
 // Logo em fundo escuro (usada sobre o painel laranja/imagem de marca)
 export const BRAND_LOGO_PANEL =
   process.env.NEXT_PUBLIC_BRAND_LOGO_PANEL || "/logo-fundo-preto.jpg";
@@ -22,7 +22,7 @@ export const OBRIGADO_HEADLINE =
   process.env.NEXT_PUBLIC_OBRIGADO_HEADLINE || "Cadastro *Concluído!*";
 export const OBRIGADO_DESCRIPTION =
   process.env.NEXT_PUBLIC_OBRIGADO_DESCRIPTION ||
-  "Nos próximos minutos, o nosso time de especialistas vai entrar em contato para entender melhor o seu consultório e como podemos ajudar a aumentar sua captação de pacientes.";
+  "Nos próximos minutos, o nosso time de especialistas vai entrar em contato para entender melhor a sua loja e como podemos ajudar a aumentar o seu volume de vendas.";
 
 // Página /agradecimento (lead desqualificado)
 export const AGRADECIMENTO_HEADLINE =
@@ -45,7 +45,7 @@ export const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID || "";
 export const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID || "";
 
 // Identificação do formulário nos eventos de tracking (dataLayer).
-export const FORM_NAME = process.env.NEXT_PUBLIC_FORM_NAME || "diagnostico_captacao_leads";
+export const FORM_NAME = process.env.NEXT_PUBLIC_FORM_NAME || "diagnostico_loja_iphone";
 export const LEAD_SOURCE = process.env.NEXT_PUBLIC_LEAD_SOURCE || "landing_page";
 
 // Webhook do n8n que recebe o lead ao final do funil.

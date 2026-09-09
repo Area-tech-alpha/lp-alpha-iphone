@@ -12,11 +12,11 @@ Copie `.env.example` para `.env.local` e preencha:
 
 Assets de marca já em `public/`: `logo-fundo-preto.jpg` (logo sobre o painel laranja), `logo-sem-fundo.PNG` (logo transparente sobre fundo branco) e `brand-panel-bg.webp` (imagem de fundo do painel lateral).
 
-Pendências para ir pra produção (ver brief original):
+Regra de qualificação (única pergunta qualificatória, ver [lib/steps.ts](lib/steps.ts) e [lib/qualification.ts](lib/qualification.ts)): lead informa quantos iPhones a loja vende por mês; respostas "De 0 a 20" e "De 20 a 50" são desqualificadas, "De 50 a 150" e "150 ou mais" são qualificadas.
 
-- **Regra de qualificação** ainda não definida pelo time comercial — placeholder em [lib/qualification.ts](lib/qualification.ts).
+Pendências para ir pra produção:
+
 - **Depoimentos** são placeholders ilustrativos em [lib/testimonials.ts](lib/testimonials.ts) — trocar por depoimentos reais.
-- **Opções de área de atuação** em [lib/steps.ts](lib/steps.ts) devem ser ajustadas pro nicho do cliente.
 
 ## Getting Started
 

@@ -1,9 +1,12 @@
 import type { Answers } from "./steps";
 
-const DESQUALIFYING_FATURAMENTO = "Menos de R$20.000,00 mensal";
+const DESQUALIFYING_VOLUMES = new Set([
+  "De 0 a 20 iPhones por mês",
+  "De 20 a 50 iPhones por mês",
+]);
 
-// Regra de qualificação: só desqualifica quem respondeu a faixa mais baixa
-// de faturamento; todas as demais faixas qualificam.
+// Regra de qualificação: só qualifica lojas com 50+ iPhones vendidos por mês;
+// as duas faixas mais baixas de volume desqualificam.
 export function isQualified(answers: Answers): boolean {
-  return answers.faturamento !== DESQUALIFYING_FATURAMENTO;
+  return !DESQUALIFYING_VOLUMES.has(answers.volumeIphones);
 }

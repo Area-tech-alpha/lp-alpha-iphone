@@ -12,7 +12,7 @@ const geist = Geist({
 export const metadata: Metadata = {
   title: `Diagnóstico de Crescimento | ${BRAND_NAME}`,
   description:
-    "Responda algumas perguntas sobre o seu consultório para receber um diagnóstico gratuito.",
+    "Responda algumas perguntas sobre a sua loja para receber um diagnóstico gratuito.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

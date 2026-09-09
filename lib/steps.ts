@@ -1,4 +1,4 @@
-export type StepId = "nome" | "whatsapp" | "email" | "areaAtuacao" | "faturamento";
+export type StepId = "nome" | "whatsapp" | "email" | "volumeIphones";
 
 export type Answers = Record<StepId, string>;
 
@@ -6,8 +6,7 @@ export const EMPTY_ANSWERS: Answers = {
   nome: "",
   whatsapp: "",
   email: "",
-  areaAtuacao: "",
-  faturamento: "",
+  volumeIphones: "",
 };
 
 interface BaseStep {
@@ -50,34 +49,18 @@ export const STEPS: Step[] = [
     type: "email",
     eyebrow: "Ótimo!",
     question: "Digite seu melhor e-mail:",
-    placeholder: "voce@escritorio.com.br",
+    placeholder: "voce@loja.com.br",
   },
   {
-    id: "areaAtuacao",
-    type: "select",
-    eyebrow: "Agora, sobre o seu consultório",
-    question: "Qual é a área de atuação do seu consultório?",
-    // TODO: ajustar as opções pro nicho/cliente antes de ir pra produção.
-    options: [
-      "Cirurgia Plástica",
-      "Dermatologia",
-      "Nutrologia",
-      "Odontologia",
-      "Outro",
-    ],
-  },
-  {
-    id: "faturamento",
+    id: "volumeIphones",
     type: "select",
     eyebrow: "Última pergunta!",
-    question: "Qual faturamento médio mensal do seu consultório?",
+    question: "Quantos iPhones sua loja vende, em média, por mês?",
     options: [
-      "Mais de 2 milhões mensais",
-      "Entre 500 mil e 2 milhões mensais",
-      "Entre 150 e 500 mil reais mensais",
-      "Entre 50 e 150 mil reais mensais",
-      "Entre 20 e 50 mil reais mensais",
-      "Menos de R$20.000,00 mensal",
+      "De 0 a 20 iPhones por mês",
+      "De 20 a 50 iPhones por mês",
+      "De 50 a 150 iPhones por mês",
+      "150 iPhones ou mais por mês",
     ],
   },
 ];
