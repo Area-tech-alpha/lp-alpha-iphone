@@ -1,11 +1,10 @@
-export type StepId = "nome" | "whatsapp" | "email" | "volumeIphones";
+export type StepId = "nome" | "whatsapp" | "volumeIphones";
 
 export type Answers = Record<StepId, string>;
 
 export const EMPTY_ANSWERS: Answers = {
   nome: "",
   whatsapp: "",
-  email: "",
   volumeIphones: "",
 };
 
@@ -43,13 +42,6 @@ export const STEPS: Step[] = [
     question: "Qual seu WhatsApp?",
     placeholder: "99999-9999",
     helperText: "Vamos usar esse número só para falar sobre o seu diagnóstico.",
-  },
-  {
-    id: "email",
-    type: "email",
-    eyebrow: "Ótimo!",
-    question: "Digite seu melhor e-mail:",
-    placeholder: "voce@loja.com.br",
   },
   {
     id: "volumeIphones",
