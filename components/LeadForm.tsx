@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
   BRAND_DESCRIPTION,
@@ -25,7 +25,7 @@ import { TESTIMONIALS } from "@/lib/testimonials";
 import { pushDataLayerEvent, trackMetaLead } from "@/lib/tracking";
 import { formatPhone, isValidPhone } from "@/lib/validation";
 
-function validateStep(step: Step, value: string): string | null {
+function validateStepValue(step: Step, value: string): string | null {
   switch (step.id) {
     case "nome":
       return value.trim().length > 0 ? null : "Digite seu nome para continuar.";
@@ -38,20 +38,13 @@ function validateStep(step: Step, value: string): string | null {
 
 export function LeadForm() {
   const router = useRouter();
-  const [stepIndex, setStepIndex] = useState(0);
   const [answers, setAnswers] = useState<Answers>(EMPTY_ANSWERS);
-  const [error, setError] = useState("");
+  const [errors, setErrors] = useState<Partial<Record<keyof Answers, string>>>({});
+  const [submitting, setSubmitting] = useState(false);
   const attributionRef = useRef<Attribution | null>(null);
   const leadFiredRef = useRef(false);
 
-  const step = STEPS[stepIndex];
-  const testimonial = useMemo(
-    () => TESTIMONIALS[stepIndex % TESTIMONIALS.length],
-    [stepIndex]
-  );
-  const progress = (stepIndex / STEPS.length) * 100;
-  // Imagem real da marca por cima, gradiente laranja como fallback caso o
-  // arquivo ainda não exista em public/ (ver BRAND_PANEL_BG).
+  const testimonial = TESTIMONIALS[0];
   const brandPanelStyle = {
     backgroundImage: `url(${BRAND_PANEL_BG}), linear-gradient(135deg, var(--brand-hi), var(--brand) 55%, var(--brand-deep))`,
   };
@@ -61,58 +54,30 @@ export function LeadForm() {
     pushDataLayerEvent({ event: "form_view", form_name: FORM_NAME, source: LEAD_SOURCE });
   }, []);
 
-  useEffect(() => {
-    if (stepIndex === 0) return;
-    pushDataLayerEvent({
-      event: "form_step",
-      form_name: FORM_NAME,
-      source: LEAD_SOURCE,
-      step: step.id,
-      step_number: stepIndex + 1,
-    });
-  }, [stepIndex, step.id]);
-
-  function updateAnswer(value: string) {
-    setAnswers((prev) => ({ ...prev, [step.id]: value }));
-    if (error) setError("");
-  }
-
-  function goBack() {
-    if (stepIndex === 0) return;
-    setError("");
-    setStepIndex((i) => i - 1);
+  function updateAnswer(id: keyof Answers, value: string) {
+    setAnswers((prev) => ({ ...prev, [id]: value }));
+    if (errors[id]) setErrors((prev) => ({ ...prev, [id]: undefined }));
   }
 
   function finalize(finalAnswers: Answers) {
     const qualificado = isQualified(finalAnswers);
 
-    pushDataLayerEvent({
-      event: "form_submit",
-      form_name: FORM_NAME,
-      source: LEAD_SOURCE,
-      qualificado,
-    });
+    pushDataLayerEvent({ event: "form_submit", form_name: FORM_NAME, source: LEAD_SOURCE, qualificado });
 
     if (!leadFiredRef.current) {
       trackMetaLead(META_PIXEL_ID, { qualificado });
       leadFiredRef.current = true;
     }
 
-    const payload = {
-      ...finalAnswers,
-      qualificado,
-      attribution: attributionRef.current,
-    };
+    const payload = { ...finalAnswers, qualificado, attribution: attributionRef.current };
 
-    // Disparo em paralelo, sem bloquear o redirecionamento — keepalive
-    // garante que a requisição termine mesmo após a navegação.
     if (N8N_WEBHOOK_URL) {
       fetch(N8N_WEBHOOK_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
         keepalive: true,
-      }).catch(() => { });
+      }).catch(() => {});
     }
 
     fetch(LEAD_WEBHOOK_URL, {
@@ -120,31 +85,26 @@ export function LeadForm() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...payload, origem: LEAD_ORIGIN }),
       keepalive: true,
-    }).catch(() => { });
+    }).catch(() => {});
 
     router.push(qualificado ? "/obrigado" : "/agradecimento");
   }
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    const value = answers[step.id];
-    const validationError = validateStep(step, value);
 
-    if (validationError) {
-      setError(validationError);
+    const nextErrors: Partial<Record<keyof Answers, string>> = {};
+    for (const step of STEPS) {
+      const err = validateStepValue(step, answers[step.id]);
+      if (err) nextErrors[step.id] = err;
+    }
+    if (Object.keys(nextErrors).length > 0) {
+      setErrors(nextErrors);
       return;
     }
 
-    if (stepIndex === STEPS.length - 1) {
-      finalize(answers);
-      return;
-    }
-
-    setStepIndex((i) => i + 1);
-  }
-
-  function handleSelect(option: string) {
-    updateAnswer(option);
+    setSubmitting(true);
+    finalize(answers);
   }
 
   return (
@@ -166,81 +126,75 @@ export function LeadForm() {
       </aside>
 
       <section className="form-panel">
-        <div className="progress-track" aria-hidden="true">
-          <span style={{ height: `${progress}%` }} />
-        </div>
-
         <header className="form-header">
-          <button
-            className="back-button"
-            type="button"
-            onClick={goBack}
-            disabled={stepIndex === 0}
-            aria-label="Voltar para a etapa anterior"
-          >
-            ←
-          </button>
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img className="brand-mark" src={BRAND_LOGO_MARK} alt={BRAND_NAME} />
         </header>
 
-        <div className="content-stack" key={step.id}>
-          <form className="question-card" onSubmit={handleSubmit} noValidate>
+        <div className="content-stack">
+          <form className="question-card compact-form" onSubmit={handleSubmit} noValidate>
             <div className="question-copy">
-              <p className="eyebrow">{step.eyebrow}</p>
-              <h1>{step.question}</h1>
+              <p className="eyebrow">Preencha e um especialista entra em contato</p>
+              <h1>Quero saber mais</h1>
             </div>
 
-            <div className="field-group">
-              {step.type === "select" ? (
-                <div className="choice-grid" role="group" aria-label={step.question}>
-                  {step.options.map((option) => (
-                    <button
-                      key={option}
-                      type="button"
-                      className={`choice-button${answers[step.id] === option ? " selected" : ""}`}
-                      onClick={() => handleSelect(option)}
-                    >
-                      {option}
-                    </button>
-                  ))}
-                </div>
-              ) : step.type === "tel" ? (
-                <div className="phone-control">
-                  <span className="phone-prefix">+55</span>
-                  <input
-                    type="tel"
-                    inputMode="numeric"
-                    placeholder={step.placeholder}
-                    aria-label={step.question}
-                    aria-invalid={Boolean(error)}
-                    autoFocus
+            {STEPS.map((step) => (
+              <div className="field-group" key={step.id}>
+                <label className="field-label" htmlFor={step.id}>{step.question}</label>
+
+                {step.type === "select" ? (
+                  <select
+                    id={step.id}
                     value={answers[step.id]}
-                    onChange={(e) => updateAnswer(formatPhone(e.target.value))}
+                    required
+                    aria-invalid={Boolean(errors[step.id])}
+                    onChange={(e) => updateAnswer(step.id, e.target.value)}
+                  >
+                    <option value="" disabled>
+                      {step.placeholder}
+                    </option>
+                    {step.options.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                ) : step.type === "tel" ? (
+                  <div className="phone-control">
+                    <span className="phone-prefix">+55</span>
+                    <input
+                      id={step.id}
+                      type="tel"
+                      inputMode="numeric"
+                      placeholder={step.placeholder}
+                      required
+                      aria-invalid={Boolean(errors[step.id])}
+                      value={answers[step.id]}
+                      onChange={(e) => updateAnswer(step.id, formatPhone(e.target.value))}
+                    />
+                  </div>
+                ) : (
+                  <input
+                    id={step.id}
+                    type={step.type}
+                    placeholder={step.placeholder}
+                    required
+                    aria-invalid={Boolean(errors[step.id])}
+                    value={answers[step.id]}
+                    onChange={(e) => updateAnswer(step.id, e.target.value)}
                   />
-                </div>
-              ) : (
-                <input
-                  type={step.type}
-                  placeholder={step.placeholder}
-                  aria-label={step.question}
-                  aria-invalid={Boolean(error)}
-                  autoFocus
-                  value={answers[step.id]}
-                  onChange={(e) => updateAnswer(e.target.value)}
-                />
-              )}
-              {step.type !== "select" && step.helperText ? (
-                <p className="helper-text">{step.helperText}</p>
-              ) : null}
-              <p className="error-message" role="alert">
-                {error}
-              </p>
-            </div>
+                )}
+
+                {step.type !== "select" && step.helperText ? (
+                  <p className="helper-text">{step.helperText}</p>
+                ) : null}
+                {errors[step.id] ? <p className="error-message" role="alert">{errors[step.id]}</p> : null}
+              </div>
+            ))}
 
             <div className="action-row">
-              <button className="primary-button" type="submit" disabled={!answers[step.id]}>
-                {stepIndex === STEPS.length - 1 ? "ENVIAR" : "CONFIRMAR"}
+              <button className="primary-button" type="submit" disabled={submitting}>
+                ENVIAR
                 <span>→</span>
               </button>
             </div>
@@ -256,10 +210,7 @@ export function LeadForm() {
         </div>
 
         <footer className="legal-footer">
-          <p>
-            Ao continuar, você concorda em receber mensagens de marketing por SMS e e-mail
-            da {BRAND_NAME}.
-          </p>
+          <p>Ao continuar, você concorda em receber mensagens de marketing por SMS e e-mail da {BRAND_NAME}.</p>
           <span>© {new Date().getFullYear()} {BRAND_NAME}</span>
         </footer>
       </section>

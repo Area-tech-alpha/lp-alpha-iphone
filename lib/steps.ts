@@ -22,6 +22,7 @@ export interface TextStep extends BaseStep {
 
 export interface SelectStep extends BaseStep {
   type: "select";
+  placeholder: string;
   options: string[];
 }
 
@@ -40,7 +41,7 @@ export const STEPS: Step[] = [
     type: "tel",
     eyebrow: "Perfeito!",
     question: "Qual seu WhatsApp?",
-    placeholder: "99999-9999",
+    placeholder: "(11) 99123-4567",
     helperText: "Vamos usar esse número só para falar sobre o seu diagnóstico.",
   },
   {
@@ -48,6 +49,7 @@ export const STEPS: Step[] = [
     type: "select",
     eyebrow: "Última pergunta!",
     question: "Quantos iPhones sua loja vende, em média, por mês?",
+    placeholder: "Selecione uma faixa de volume mensal",
     options: [
       "150 iPhones ou mais por mês",
       "De 50 a 150 iPhones por mês",
