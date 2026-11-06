@@ -52,7 +52,7 @@ export const STEPS: Step[] = [
     type: "select",
     eyebrow: "Última pergunta!",
     question: "Quantos iPhones sua loja vende, em média, por mês?",
-    placeholder: "Selecione uma faixa de volume mensal",
+    placeholder: "Selecione a faixa",
     options: [
       "150 iPhones ou mais por mês",
       "De 50 a 150 iPhones por mês",
