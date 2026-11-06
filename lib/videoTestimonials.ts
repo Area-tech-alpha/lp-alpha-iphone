@@ -4,9 +4,9 @@ export interface VideoTestimonial {
   company?: string;
   // Frase de resultado exibida no card, acima do nome. Opcional.
   highlight?: string;
-  // URL do .mp4 (Vercel Blob: https://<id>.public.blob.vercel-storage.com/...) ou arquivo em /public/videos/.
+  // Arquivo em public/videos/ (ex.: "/videos/cliente.mp4") ou URL externa de um .mp4.
   videoSrc: string;
-  // Capa do card (frame exibido antes do play). Opcional.
+  // Capa do card (ex.: "/videos/cliente-poster.jpg"), exibida antes do play. Opcional.
   poster?: string;
 }
 
@@ -17,13 +17,13 @@ export const VIDEO_TESTIMONIALS: VideoTestimonial[] = [
     name: "",
     company: "Revenda Phone",
     highlight: "De 200 para +350 vendas em menos de 1 mês",
-    videoSrc: "https://z969a7ltqhigqpzp.public.blob.vercel-storage.com/Videos/depoimento-iphone-1117.mp4",
-    poster: "https://z969a7ltqhigqpzp.public.blob.vercel-storage.com/Videos/depoimento-iphone-1117-poster.jpg",
+    videoSrc: "/videos/depoimento-iphone-1117.mp4",
+    poster: "/videos/depoimento-iphone-1117-poster.jpg",
   },
   {
     name: "",
     company: "Revenda Phone",
-    videoSrc: "https://z969a7ltqhigqpzp.public.blob.vercel-storage.com/Videos/depoimento-iphone-1114.mp4",
-    poster: "https://z969a7ltqhigqpzp.public.blob.vercel-storage.com/Videos/depoimento-iphone-1114-poster.jpg",
+    videoSrc: "/videos/depoimento-iphone-1114.mp4",
+    poster: "/videos/depoimento-iphone-1114-poster.jpg",
   },
 ];
