@@ -8,16 +8,18 @@ export const EMPTY_ANSWERS: Answers = {
   volumeIphones: "",
 };
 
+// Tipos de campo — iguais nas 3 LPs (o components/LeadForm.tsx é o mesmo).
 interface BaseStep {
   id: StepId;
-  eyebrow: string;
   question: string;
+  placeholder: string;
+  eyebrow?: string;
 }
 
 export interface TextStep extends BaseStep {
   type: "text" | "email" | "tel";
-  placeholder: string;
   helperText?: string;
+  autoComplete?: string;
 }
 
 export interface SelectStep extends BaseStep {
@@ -34,20 +36,23 @@ export const STEPS: Step[] = [
     eyebrow: "Bom ter você aqui!",
     question: "Qual seu nome?",
     placeholder: "Digite sua resposta...",
+    autoComplete: "name",
   },
   {
     id: "whatsapp",
     type: "tel",
     eyebrow: "Perfeito!",
     question: "Qual seu WhatsApp?",
-    placeholder: "99999-9999",
+    placeholder: "(11) 99123-4567",
     helperText: "Vamos usar esse número só para falar sobre o seu diagnóstico.",
+    autoComplete: "tel-national",
   },
   {
     id: "volumeIphones",
     type: "select",
     eyebrow: "Última pergunta!",
     question: "Quantos iPhones sua loja vende, em média, por mês?",
+    placeholder: "Selecione uma faixa de volume mensal",
     options: [
       "150 iPhones ou mais por mês",
       "De 50 a 150 iPhones por mês",
